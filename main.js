@@ -3,7 +3,7 @@ import "./js/wasm_bridge.js";
 import mymap from "./js/map.js";
 
 async function main() {
-  await init("/pkg/yew_weather_bg.wasm");
+  await init("/trackerz/pkg/yew_weather_bg.wasm");
   run_app();
 }
 

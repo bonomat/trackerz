@@ -1,0 +1,15 @@
+{
+  "name": "yew-weather",
+  "collaborators": [
+    "Philipp Hoenisch <philipp@hoenisch.at>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "yew_weather_bg.wasm",
+    "yew_weather.js",
+    "yew_weather.d.ts"
+  ],
+  "module": "yew_weather.js",
+  "types": "yew_weather.d.ts",
+  "sideEffects": false
+}
