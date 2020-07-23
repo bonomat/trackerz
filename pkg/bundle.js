@@ -645,7 +645,7 @@
     mymap.on('submit', redrawLayer);
 
     async function main() {
-      await init("/trackerz/pkg/yew_weather_bg.wasm");
+      await init("./pkg/yew_weather_bg.wasm");
       run_app();
     }
 
