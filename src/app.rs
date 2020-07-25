@@ -1,21 +1,14 @@
 use crate::components::button::Button;
 use crate::data::geojson::*;
+use load_dotenv::load_dotenv;
+use rand::prelude::*;
+use rand::rngs::ThreadRng;
+use serde_json::Value;
+use wasm_bindgen::prelude::*;
 use yew::format::Json;
 use yew::prelude::*;
 use yew::services::storage::Area;
 use yew::services::StorageService;
-use serde_json::Value;
-use wasm_bindgen::prelude::*;
-use rand::prelude::*;
-use rand::rngs::ThreadRng;
-use load_dotenv::load_dotenv;
-
-// A macro to provide `println!(..)`-style syntax for `console.log` logging.
-macro_rules! log {
-    ( $( $t:tt )* ) => {
-        web_sys::console::log_1(&format!( $( $t )* ).into());
-    }
-}
 
 const GEOJSON_KEY: &'static str = "geojsonData";
 load_dotenv!();
@@ -24,11 +17,14 @@ load_dotenv!();
 extern "C" {
     fn update_map();
     fn read_gpx(url: &str);
+    fn remove();
 }
 
 pub enum Msg {
     AddOne,
     RemoveOne,
+    Add,
+    Remove
 }
 
 pub struct App {
@@ -57,7 +53,7 @@ impl Component for App {
         let lng: f64 = str2f64(lng);
 
         // Longitude first! geoJSON and Leaflet take opposite conventions!
-        let position = vec!(lng, lat);
+        let position = vec![lng, lat];
         App {
             link,
             counter: 0,
@@ -69,19 +65,22 @@ impl Component for App {
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        read_gpx("https://raw.githubusercontent.com/georust/gpx/master/tests/fixtures/garmin-activity.gpx");
         match msg {
             Msg::AddOne => {
                 self.counter += 1;
 
-                let position: Vec<f64> = self.position.clone().into_iter()
+                let position: Vec<f64> = self
+                    .position
+                    .clone()
+                    .into_iter()
                     .map(|x: f64| {
                         let d: f64 = self.rng.gen_range(0.00001, 0.0003);
                         if random() {
                             return x - d;
                         }
                         x + d
-                    }).collect();
+                    })
+                    .collect();
                 let position: Value = position.into();
                 let point = Geometry::new_point(position);
 
@@ -101,6 +100,12 @@ impl Component for App {
                 self.storage.store(GEOJSON_KEY, Json(&self.geo_data));
                 update_map();
             }
+            Msg::Add => {
+                read_gpx("https://raw.githubusercontent.com/georust/gpx/master/tests/fixtures/garmin-activity.gpx");
+            }
+            Msg::Remove => {
+                remove();
+            }
         }
         true
     }
@@ -112,15 +117,13 @@ impl Component for App {
     fn view(&self) -> Html {
         html! {
             <>
-                <Button onsignal=self.link.callback(|_| Msg::RemoveOne) title="Add route" />
-                <Button onsignal=self.link.callback(|_| Msg::AddOne) title="Remove route" />
+                <Button  onsignal=self.link.callback(|_| Msg::Add) title="Add route" />
+                <Button onsignal=self.link.callback(|_| Msg::Remove) title="Remove route" />
             </>
         }
     }
 }
 
 fn str2f64(s: &str) -> f64 {
-    s.trim()
-        .parse()
-        .expect("Failed parsing a String to f64")
+    s.trim().parse().expect("Failed parsing a String to f64")
 }

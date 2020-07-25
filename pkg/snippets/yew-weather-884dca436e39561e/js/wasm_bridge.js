@@ -8,4 +8,11 @@ export function read_gpx(gpx_url) {
             window.mymap.fitBounds(runLayer.getBounds());
         })
         .addTo(window.mymap);
+    window.runLayer = runLayer;
+    console.log(runLayer);
+    console.log("Hallo");
+}
+
+export function remove() {
+    window.runLayer.remove();
 }

@@ -12,7 +12,7 @@ pub struct PureButton {
 impl PureComponent for PureButton {
     fn render(&self) -> Html {
         html! {
-            <button onclick=&self.onsignal>{ &self.title }</button>
-        } 
+            <button class="btn btn-outline-primary" onclick=&self.onsignal>{ &self.title }</button>
+        }
     }
 }

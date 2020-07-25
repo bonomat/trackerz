@@ -1,8 +1,7 @@
 #![allow(dead_code)]
 
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, Map};
-
+use serde_json::{Map, Value};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Feature {
@@ -21,7 +20,9 @@ impl Feature {
     }
     pub fn add_property(&mut self, key: String, value: Value) {
         match &mut self.properties {
-            Some(v) => { v.as_object_mut().unwrap().insert(key, value); }
+            Some(v) => {
+                v.as_object_mut().unwrap().insert(key, value);
+            }
             None => {
                 let mut v = Map::new();
                 v.insert(key, value);
