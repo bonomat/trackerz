@@ -38,10 +38,20 @@ export function read_gpx(gpx_url) {
             format: new ol.format.GPX()
         }),
         style: function(feature) {
-        return style[feature.getGeometry().getType()];
-    }
+            return style[feature.getGeometry().getType()];
+        },
+        useSpatialIndex: false
     });
     window.mymap.addLayer(vector);
+    vector.getSource().on('change', function (evt) {
+        const source = evt.target;
+        if (source.getState() === 'ready') {
+            const extent = source.getExtent();
+            window.mymap.getView().fit(extent, window.mymap.getSize());
+        }
+
+    });
+    // Get the array of features
     return vector;
 }
 

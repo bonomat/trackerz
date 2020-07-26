@@ -89,6 +89,8 @@ if [ -f .init ]; then
     npm init -y
     npm install --save-dev rollup-plugin-livereload
     npm install rollup-plugin-inject-env
+    npm install pnpm -g
+    npm install @rollup/plugin-inject --save-dev
 fi
 
 build && pack && run && watch

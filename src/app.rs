@@ -66,7 +66,7 @@ impl Component for App {
                 location.push_str("trackz/gpx/20140124_110945_brisbane-to-sydney-adventure-ride.gpx");
                 let js_value = read_gpx(location.as_str());
                 // let js_value: String = js_value.into_serde().unwrap();
-                debug!("received: {:?}", js_value);
+                // debug!("received: {:?}", js_value);
                 self.layer = Some(js_value);
             }
             CallBackMsg::Remove => {

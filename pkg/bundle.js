@@ -43,10 +43,23 @@
                 format: new ol.format.GPX()
             }),
             style: function(feature) {
-            return style[feature.getGeometry().getType()];
-        }
+                return style[feature.getGeometry().getType()];
+            },
+            useSpatialIndex: false
         });
         window.mymap.addLayer(vector);
+        vector.getSource().on('change', function (evt) {
+            const source = evt.target;
+            if (source.getState() === 'ready') {
+                const numFeatures = source.getFeatures().length;
+                console.log("Count after change: " + numFeatures);
+                const extent = source.getExtent();
+                console.log(extent);
+                window.mymap.getView().fit(extent, window.mymap.getSize());
+            }
+
+        });
+        // Get the array of features
         return vector;
     }
 
@@ -552,7 +565,7 @@
         imports.wbg.__wbindgen_throw = function(arg0, arg1) {
             throw new Error(getStringFromWasm0(arg0, arg1));
         };
-        imports.wbg.__wbindgen_closure_wrapper342 = function(arg0, arg1, arg2) {
+        imports.wbg.__wbindgen_closure_wrapper341 = function(arg0, arg1, arg2) {
             var ret = makeMutClosure(arg0, arg1, 133, __wbg_adapter_16);
             return addHeapObject(ret);
         };
@@ -574,12 +587,13 @@
         layers: [
             new ol.layer.Tile({
                 source: new ol.source.OSM()
-            })
+            }),
         ],
         view: new ol.View({
-            center: ol.proj.fromLonLat([37.41, 8.82]),
+            center: [0, 0],
             zoom: 4
-        })
+        }),
+        units: 'm',
     });
 
     async function main() {
