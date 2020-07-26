@@ -14,7 +14,7 @@ load_dotenv!();
 #[wasm_bindgen(module = "/js/wasm_bridge.js")]
 extern "C" {
     fn read_gpx(url: &str) -> JsValue;
-    fn remove();
+    fn remove(layer: &JsValue);
 }
 
 pub enum CallBackMsg {
@@ -28,6 +28,7 @@ pub struct App {
     storage: StorageService,
     geo_data: Vec<Feature>,
     position: Vec<f64>,
+    layer: Option<JsValue>
 }
 
 impl Component for App {
@@ -51,6 +52,7 @@ impl Component for App {
             storage,
             geo_data,
             position,
+            layer: None
         }
     }
 
@@ -65,9 +67,11 @@ impl Component for App {
                 let js_value = read_gpx(location.as_str());
                 // let js_value: String = js_value.into_serde().unwrap();
                 debug!("received: {:?}", js_value);
+                self.layer = Some(js_value);
             }
             CallBackMsg::Remove => {
-                remove();
+                let value = self.layer.as_ref().unwrap();
+                remove(value);
             }
         }
         true

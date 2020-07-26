@@ -41,11 +41,11 @@ export function read_gpx(gpx_url) {
         return style[feature.getGeometry().getType()];
     }
     });
-    console.log(vector);
     window.mymap.addLayer(vector);
     return vector;
 }
 
-export function remove() {
-    window.runLayer.remove();
+export function remove(vector) {
+    console.log("Received again: " + vector);
+    window.mymap.removeLayer(vector);
 }
