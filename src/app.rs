@@ -13,7 +13,7 @@ load_dotenv!();
 
 #[wasm_bindgen(module = "/js/wasm_bridge.js")]
 extern "C" {
-    fn read_gpx(url: &str);
+    fn read_gpx(url: &str) -> JsValue;
     fn remove();
 }
 
@@ -62,7 +62,9 @@ impl Component for App {
                 let mut location: String = location.href().expect("To get URL");
                 debug!("{:?}", location);
                 location.push_str("trackz/gpx/20140124_110945_brisbane-to-sydney-adventure-ride.gpx");
-                read_gpx(location.as_str());
+                let js_value = read_gpx(location.as_str());
+                // let js_value: String = js_value.into_serde().unwrap();
+                debug!("received: {:?}", js_value);
             }
             CallBackMsg::Remove => {
                 remove();

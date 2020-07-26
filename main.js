@@ -1,6 +1,6 @@
 import init, { run_app } from "./pkg/yew_weather.js";
 import "./js/wasm_bridge.js";
-import mymap from "./js/map.js";
+import mymap from "./js/open_layer.js";
 
 async function main() {
   await init("./pkg/yew_weather_bg.wasm");

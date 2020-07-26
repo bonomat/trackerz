@@ -3,14 +3,52 @@
 (function () {
     'use strict';
 
+    // import 'ol/ol.css';
+    // import GPX from 'ol/format/GPX';
+    // import {Vector as VectorLayer} from 'ol/layer';
+    // import VectorSource from 'ol/source/Vector';
+    // import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
+
     function read_gpx(gpx_url) {
-        var runLayer = omnivore.gpx(gpx_url)
-            .on('ready', function () {
-                window.mymap.fitBounds(runLayer.getBounds());
+        const style = {
+            'Point': new ol.style.Style({
+                image: new ol.style.Circle({
+                    fill: new ol.style.Fill({
+                        color: 'rgba(255,255,0,0.4)'
+                    }),
+                    radius: 5,
+                    stroke: new ol.style.Stroke({
+                        color: '#ff0',
+                        width: 1
+                    })
+                })
+            }),
+            'LineString': new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: '#f00',
+                    width: 3
+                })
+            }),
+            'MultiLineString': new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: '#bb00ff',
+                    width: 3
+                })
             })
-            .addTo(window.mymap);
-        window.runLayer = runLayer;
-        console.log(runLayer);
+        };
+
+        const vector = new ol.layer.Vector ({
+            source: new ol.source.Vector({
+                url: gpx_url,
+                format: new ol.format.GPX()
+            }),
+            style: function(feature) {
+            return style[feature.getGeometry().getType()];
+        }
+        });
+        console.log(vector);
+        window.mymap.addLayer(vector);
+        return vector;
     }
 
     function remove() {
@@ -300,9 +338,6 @@
             var ret = getStringFromWasm0(arg0, arg1);
             return addHeapObject(ret);
         };
-        imports.wbg.__wbg_readgpx_5ff0e81338760955 = function(arg0, arg1) {
-            read_gpx(getStringFromWasm0(arg0, arg1));
-        };
         imports.wbg.__wbindgen_cb_drop = function(arg0) {
             const obj = takeObject(arg0).original;
             if (obj.cnt-- == 1) {
@@ -311,6 +346,10 @@
             }
             var ret = false;
             return ret;
+        };
+        imports.wbg.__wbg_readgpx_5ff0e81338760955 = function(arg0, arg1) {
+            var ret = read_gpx(getStringFromWasm0(arg0, arg1));
+            return addHeapObject(ret);
         };
         imports.wbg.__wbindgen_object_clone_ref = function(arg0) {
             var ret = getObject(arg0);
@@ -516,8 +555,8 @@
         imports.wbg.__wbindgen_throw = function(arg0, arg1) {
             throw new Error(getStringFromWasm0(arg0, arg1));
         };
-        imports.wbg.__wbindgen_closure_wrapper343 = function(arg0, arg1, arg2) {
-            var ret = makeMutClosure(arg0, arg1, 132, __wbg_adapter_16);
+        imports.wbg.__wbindgen_closure_wrapper344 = function(arg0, arg1, arg2) {
+            var ret = makeMutClosure(arg0, arg1, 133, __wbg_adapter_16);
             return addHeapObject(ret);
         };
         imports['./snippets/yew-weather-884dca436e39561e/js/wasm_bridge.js'] = __wbg_star0;
@@ -534,94 +573,18 @@
         return wasm;
     }
 
-    var lat = '-33.870453';
-    var lng = '151.208755';
-    var mapbox_token = 'pk.eyJ1IjoiYm9ub21hdCIsImEiOiJja2N1YTlsZ2wxaWRxMnhveTFmYTBlcjM3In0.t8ar_EvDw-oiHlGrrGXVaA';
-
-    var position = [lat, lng];
-    var mapboxurl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}';
-
-    // Mapbox streetmap
-    var basemap = L.tileLayer(mapboxurl,
-        {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: 'mapbox/streets-v11',
-            tileSize: 512,
-            zoomOffset: -1,
-            accessToken: mapbox_token
-        });
-
-    // Mapbox satellite
-    var satmap = L.tileLayer(mapboxurl,
-        {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: 'mapbox/satellite-v9',
-            tileSize: 512,
-            zoomOffset: -1,
-            accessToken: mapbox_token
-        });
-
-    // Display popup if popupContent property
-    // is present in the geoJSON feature
-    function onEachFeature(feature, layer) {
-        if (feature.properties && feature.properties.popupContent) {
-            layer.bindPopup(feature.properties.popupContent);
-        }
-    }
-
-    // Get geoJSON data from the sessionStorage
-    function get_data() {
-        var geojsonData = [];
-        var rawGeojsonData = sessionStorage.geojsonData;
-        if (rawGeojsonData || rawGeojsonData === "") {
-            geojsonData = JSON.parse(rawGeojsonData);
-        }
-        return geojsonData
-    }
-
-    // Create a layer for geoJSON data
-    function get_datalayer() {
-        var geojsonData = get_data();
-        return L.geoJSON(geojsonData, {
-            onEachFeature: onEachFeature
+    const mymap = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        view: new ol.View({
+            center: ol.proj.fromLonLat([37.41, 8.82]),
+            zoom: 4
         })
-    }
-
-    var infolayer = get_datalayer();
-
-    // The map
-    var mymap = L.map('my_map',
-        {
-            center: position,
-            zoom: 18,
-            layers: [basemap, satmap, infolayer]
-        });
-
-    // Basemaps in Layer Control
-    var baseMaps = {
-        "Satellite": satmap,
-        "Streets": basemap
-    };
-    // Overlay maps in Layer Control
-    var overlayMap = {
-        "Info": infolayer
-    };
-    // Layer Control
-    var controls = L.control.layers(baseMaps, overlayMap).addTo(mymap);
-
-    // Function to redraw the geoJSON layer, and its control
-    // connected then to an event
-    function redrawLayer(e) {
-        controls.removeLayer(infolayer);
-        mymap.removeLayer(infolayer);
-        infolayer = get_datalayer();
-        infolayer.addTo(mymap);
-        controls.addOverlay(infolayer, "Info");
-    }
-
-    mymap.on('submit', redrawLayer);
+    });
 
     async function main() {
       await init("./pkg/yew_weather_bg.wasm");

@@ -278,9 +278,6 @@ async function init(input) {
         var ret = getStringFromWasm0(arg0, arg1);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbg_readgpx_5ff0e81338760955 = function(arg0, arg1) {
-        read_gpx(getStringFromWasm0(arg0, arg1));
-    };
     imports.wbg.__wbindgen_cb_drop = function(arg0) {
         const obj = takeObject(arg0).original;
         if (obj.cnt-- == 1) {
@@ -289,6 +286,10 @@ async function init(input) {
         }
         var ret = false;
         return ret;
+    };
+    imports.wbg.__wbg_readgpx_5ff0e81338760955 = function(arg0, arg1) {
+        var ret = read_gpx(getStringFromWasm0(arg0, arg1));
+        return addHeapObject(ret);
     };
     imports.wbg.__wbindgen_object_clone_ref = function(arg0) {
         var ret = getObject(arg0);
@@ -494,8 +495,8 @@ async function init(input) {
     imports.wbg.__wbindgen_throw = function(arg0, arg1) {
         throw new Error(getStringFromWasm0(arg0, arg1));
     };
-    imports.wbg.__wbindgen_closure_wrapper343 = function(arg0, arg1, arg2) {
-        var ret = makeMutClosure(arg0, arg1, 132, __wbg_adapter_16);
+    imports.wbg.__wbindgen_closure_wrapper344 = function(arg0, arg1, arg2) {
+        var ret = makeMutClosure(arg0, arg1, 133, __wbg_adapter_16);
         return addHeapObject(ret);
     };
     imports['./snippets/yew-weather-884dca436e39561e/js/wasm_bridge.js'] = __wbg_star0;
