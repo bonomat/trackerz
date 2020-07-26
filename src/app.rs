@@ -1,8 +1,7 @@
-use crate::components::button::Button;
+use crate::components::button::BootstrapButton;
 use crate::data::geojson::*;
 use load_dotenv::load_dotenv;
 use rand::prelude::*;
-use rand::rngs::ThreadRng;
 use wasm_bindgen::prelude::*;
 use yew::format::Json;
 use yew::prelude::*;
@@ -14,12 +13,11 @@ load_dotenv!();
 
 #[wasm_bindgen(module = "/js/wasm_bridge.js")]
 extern "C" {
-    fn update_map();
     fn read_gpx(url: &str);
     fn remove();
 }
 
-pub enum Msg {
+pub enum CallBackMsg {
     Add,
     Remove
 }
@@ -30,11 +28,10 @@ pub struct App {
     storage: StorageService,
     geo_data: Vec<Feature>,
     position: Vec<f64>,
-    rng: ThreadRng,
 }
 
 impl Component for App {
-    type Message = Msg;
+    type Message = CallBackMsg;
     type Properties = ();
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
@@ -42,14 +39,11 @@ impl Component for App {
         let Json(geo_data) = storage.restore(GEOJSON_KEY);
         let geo_data = geo_data.unwrap_or_else(|_| Vec::new());
 
-        let rng = thread_rng();
-
         let lat = env!("LATITUDE", "Cound not find LATITUDE in .env");
         let lng = env!("LONGITUDE", "Cound not find LONGITUDE in .env");
         let lat: f64 = str2f64(lat);
         let lng: f64 = str2f64(lng);
 
-        // Longitude first! geoJSON and Leaflet take opposite conventions!
         let position = vec![lng, lat];
         App {
             link,
@@ -57,55 +51,20 @@ impl Component for App {
             storage,
             geo_data,
             position,
-            rng,
         }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, action: Self::Message) -> ShouldRender {
         let window = web_sys::window().expect("no global `window` exists");
-        match msg {/*
-            Msg::AddOne => {
-                self.counter += 1;
-
-                let position: Vec<f64> = self
-                    .position
-                    .clone()
-                    .into_iter()
-                    .map(|x: f64| {
-                        let d: f64 = self.rng.gen_range(0.00001, 0.0003);
-                        if random() {
-                            return x - d;
-                        }
-                        x + d
-                    })
-                    .collect();
-                let position: Value = position.into();
-                let point = Geometry::new_point(position);
-
-                let mut feat = Feature::new();
-                feat.add_geomerty(Some(point));
-                feat.add_property("popupContent".into(), self.counter.to_string().into());
-                self.geo_data.push(feat);
-
-                self.storage.store(GEOJSON_KEY, Json(&self.geo_data));
-                update_map();
-            }
-            Msg::RemoveOne => {
-                self.counter -= if self.counter == 0 { 0 } else { 1 };
-
-                let _ = self.geo_data.pop();
-
-                self.storage.store(GEOJSON_KEY, Json(&self.geo_data));
-                update_map();
-            }*/
-            Msg::Add => {
+        match action {
+            CallBackMsg::Add => {
                 let location = window.location();
                 let mut location: String = location.href().expect("To get URL");
                 debug!("{:?}", location);
                 location.push_str("trackz/gpx/20140124_110945_brisbane-to-sydney-adventure-ride.gpx");
                 read_gpx(location.as_str());
             }
-            Msg::Remove => {
+            CallBackMsg::Remove => {
                 remove();
             }
         }
@@ -119,8 +78,8 @@ impl Component for App {
     fn view(&self) -> Html {
         html! {
             <>
-                <Button  onsignal=self.link.callback(|_| Msg::Add) title="Add route" />
-                <Button onsignal=self.link.callback(|_| Msg::Remove) title="Remove route" />
+                <BootstrapButton onsignal=self.link.callback(|_| CallBackMsg::Add) title="Add route" />
+                <BootstrapButton onsignal=self.link.callback(|_| CallBackMsg::Remove) title="Remove route" />
             </>
         }
     }

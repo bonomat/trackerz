@@ -1,7 +1,7 @@
 use yew::{html, Callback, Html, MouseEvent, Properties};
 use yewtil::{Pure, PureComponent};
 
-pub type Button = Pure<PureButton>;
+pub type BootstrapButton = Pure<PureButton>;
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct PureButton {
