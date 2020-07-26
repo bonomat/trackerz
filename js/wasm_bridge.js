@@ -9,6 +9,7 @@ export function read_gpx(gpx_url) {
         })
         .addTo(window.mymap);
     window.runLayer = runLayer;
+    console.log(runLayer);
 }
 
 export function remove() {

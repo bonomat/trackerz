@@ -26,4 +26,5 @@ features = [
   'Node',
   'Window',
   "console",
+  "Url"
 ]

@@ -3,7 +3,6 @@ use crate::data::geojson::*;
 use load_dotenv::load_dotenv;
 use rand::prelude::*;
 use rand::rngs::ThreadRng;
-use serde_json::Value;
 use wasm_bindgen::prelude::*;
 use yew::format::Json;
 use yew::prelude::*;
@@ -21,8 +20,6 @@ extern "C" {
 }
 
 pub enum Msg {
-    AddOne,
-    RemoveOne,
     Add,
     Remove
 }
@@ -65,7 +62,8 @@ impl Component for App {
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
+        let window = web_sys::window().expect("no global `window` exists");
+        match msg {/*
             Msg::AddOne => {
                 self.counter += 1;
 
@@ -99,9 +97,13 @@ impl Component for App {
 
                 self.storage.store(GEOJSON_KEY, Json(&self.geo_data));
                 update_map();
-            }
+            }*/
             Msg::Add => {
-                read_gpx("https://raw.githubusercontent.com/georust/gpx/master/tests/fixtures/garmin-activity.gpx");
+                let location = window.location();
+                let mut location: String = location.href().expect("To get URL");
+                debug!("{:?}", location);
+                location.push_str("trackz/gpx/20140124_110945_brisbane-to-sydney-adventure-ride.gpx");
+                read_gpx(location.as_str());
             }
             Msg::Remove => {
                 remove();
