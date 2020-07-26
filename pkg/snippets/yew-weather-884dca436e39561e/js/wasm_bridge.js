@@ -46,10 +46,7 @@ export function read_gpx(gpx_url) {
     vector.getSource().on('change', function (evt) {
         const source = evt.target;
         if (source.getState() === 'ready') {
-            const numFeatures = source.getFeatures().length;
-            console.log("Count after change: " + numFeatures);
             const extent = source.getExtent();
-            console.log(extent);
             window.mymap.getView().fit(extent, window.mymap.getSize());
         }
 
