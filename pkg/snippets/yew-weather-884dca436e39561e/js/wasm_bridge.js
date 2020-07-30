@@ -4,7 +4,8 @@
 // import VectorSource from 'ol/source/Vector';
 // import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
 
-export function read_gpx(gpx_url) {
+
+export async function read_gpx(gpx_url) {
     const style = {
         'Point': new ol.style.Style({
             image: new ol.style.Circle({
@@ -42,20 +43,27 @@ export function read_gpx(gpx_url) {
         },
         useSpatialIndex: false
     });
+    vector.set('name', 'latest');
     window.mymap.addLayer(vector);
-    vector.getSource().on('change', function (evt) {
+    vector.getSource().once('change', function (evt) {
         const source = evt.target;
         if (source.getState() === 'ready') {
             const extent = source.getExtent();
             window.mymap.getView().fit(extent, window.mymap.getSize());
         }
-
     });
     // Get the array of features
-    return vector;
+    return vector.get('name');
 }
 
-export function remove(vector) {
-    console.log("Received again: " + vector);
-    window.mymap.removeLayer(vector);
+export function remove(id) {
+    const layers = window.mymap.getLayers().getArray();
+    for (const layer of layers) {
+        let name = layer.get('name');
+        console.log("Found layer: " + name);
+        if (name === id) {
+            window.mymap.removeLayer(layer);
+        }
+    }
+
 }

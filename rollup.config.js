@@ -10,6 +10,6 @@ export default {
   },
   plugins: [
     livereload('pkg'), 
-    injectEnv()
+    injectEnv(),
   ],
 };

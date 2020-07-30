@@ -9,7 +9,8 @@
     // import VectorSource from 'ol/source/Vector';
     // import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
 
-    function read_gpx(gpx_url) {
+
+    async function read_gpx(gpx_url) {
         const style = {
             'Point': new ol.style.Style({
                 image: new ol.style.Circle({
@@ -47,22 +48,29 @@
             },
             useSpatialIndex: false
         });
+        vector.set('name', 'latest');
         window.mymap.addLayer(vector);
-        vector.getSource().on('change', function (evt) {
+        vector.getSource().once('change', function (evt) {
             const source = evt.target;
             if (source.getState() === 'ready') {
                 const extent = source.getExtent();
                 window.mymap.getView().fit(extent, window.mymap.getSize());
             }
-
         });
         // Get the array of features
-        return vector;
+        return vector.get('name');
     }
 
-    function remove(vector) {
-        console.log("Received again: " + vector);
-        window.mymap.removeLayer(vector);
+    function remove(id) {
+        const layers = window.mymap.getLayers().getArray();
+        for (const layer of layers) {
+            let name = layer.get('name');
+            console.log("Found layer: " + name);
+            if (name === id) {
+                window.mymap.removeLayer(layer);
+            }
+        }
+
     }
 
     let wasm;
@@ -269,20 +277,14 @@
     }
     function __wbg_adapter_16(arg0, arg1, arg2) {
         try {
-            wasm._dyn_core__ops__function__FnMut___A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h02648804efc590c0(arg0, arg1, addBorrowedObject(arg2));
+            wasm._dyn_core__ops__function__FnMut___A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h469a72d09d1de619(arg0, arg1, addBorrowedObject(arg2));
         } finally {
             heap[stack_pointer++] = undefined;
         }
     }
 
-    /**
-    */
-    function run_app() {
-        wasm.run_app();
-    }
-
-    function isLikeNone(x) {
-        return x === undefined || x === null;
+    function __wbg_adapter_19(arg0, arg1, arg2) {
+        wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h9872cdcb5e619b99(arg0, arg1, addHeapObject(arg2));
     }
 
     function handleError(f) {
@@ -294,6 +296,15 @@
                 wasm.__wbindgen_exn_store(addHeapObject(e));
             }
         };
+    }
+    /**
+    */
+    function run_app() {
+        wasm.run_app();
+    }
+
+    function isLikeNone(x) {
+        return x === undefined || x === null;
     }
 
     async function load(module, imports) {
@@ -338,6 +349,9 @@
         imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
             takeObject(arg0);
         };
+        imports.wbg.__wbg_remove_21090bad2ce0314d = function(arg0, arg1) {
+            remove(getStringFromWasm0(arg0, arg1));
+        };
         imports.wbg.__wbindgen_cb_drop = function(arg0) {
             const obj = takeObject(arg0).original;
             if (obj.cnt-- == 1) {
@@ -347,15 +361,12 @@
             var ret = false;
             return ret;
         };
-        imports.wbg.__wbg_remove_21090bad2ce0314d = function(arg0) {
-            remove(getObject(arg0));
-        };
+        imports.wbg.__wbg_readgpx_5ff0e81338760955 = handleError(function(arg0, arg1) {
+            var ret = read_gpx(getStringFromWasm0(arg0, arg1));
+            return addHeapObject(ret);
+        });
         imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
             var ret = getStringFromWasm0(arg0, arg1);
-            return addHeapObject(ret);
-        };
-        imports.wbg.__wbg_readgpx_5ff0e81338760955 = function(arg0, arg1) {
-            var ret = read_gpx(getStringFromWasm0(arg0, arg1));
             return addHeapObject(ret);
         };
         imports.wbg.__wbindgen_object_clone_ref = function(arg0) {
@@ -499,6 +510,18 @@
             var ret = new Object();
             return addHeapObject(ret);
         };
+        imports.wbg.__wbg_resolve_57cbe6ab0b3b60a7 = function(arg0) {
+            var ret = Promise.resolve(getObject(arg0));
+            return addHeapObject(ret);
+        };
+        imports.wbg.__wbg_then_45c887a50a229274 = function(arg0, arg1) {
+            var ret = getObject(arg0).then(getObject(arg1));
+            return addHeapObject(ret);
+        };
+        imports.wbg.__wbg_then_9d18941da21f7104 = function(arg0, arg1, arg2) {
+            var ret = getObject(arg0).then(getObject(arg1), getObject(arg2));
+            return addHeapObject(ret);
+        };
         imports.wbg.__wbg_self_d1b58dbab69d5bb1 = handleError(function() {
             var ret = self.self;
             return addHeapObject(ret);
@@ -547,8 +570,12 @@
         imports.wbg.__wbindgen_throw = function(arg0, arg1) {
             throw new Error(getStringFromWasm0(arg0, arg1));
         };
-        imports.wbg.__wbindgen_closure_wrapper227 = function(arg0, arg1, arg2) {
-            var ret = makeMutClosure(arg0, arg1, 72, __wbg_adapter_16);
+        imports.wbg.__wbindgen_closure_wrapper236 = function(arg0, arg1, arg2) {
+            var ret = makeMutClosure(arg0, arg1, 74, __wbg_adapter_16);
+            return addHeapObject(ret);
+        };
+        imports.wbg.__wbindgen_closure_wrapper285 = function(arg0, arg1, arg2) {
+            var ret = makeMutClosure(arg0, arg1, 88, __wbg_adapter_19);
             return addHeapObject(ret);
         };
 
@@ -564,6 +591,8 @@
         return wasm;
     }
 
+    const sydneyLonLat = [151.2093,-33.8688];
+    const startLocation = ol.proj.fromLonLat(sydneyLonLat);
     const mymap = new ol.Map({
         target: 'map',
         layers: [
@@ -572,8 +601,8 @@
             }),
         ],
         view: new ol.View({
-            center: [0, 0],
-            zoom: 4
+            center: startLocation,
+            zoom: 8
         }),
         units: 'm',
     });

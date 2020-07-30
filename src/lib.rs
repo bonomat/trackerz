@@ -6,6 +6,7 @@ mod macros;
 #[macro_use]
 mod app;
 mod components;
+mod connector;
 
 use wasm_bindgen::prelude::*;
 
