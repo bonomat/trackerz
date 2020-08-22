@@ -1,6 +1,8 @@
 use crate::components::button::BootstrapButton;
-use crate::components::table::BootstrapTable;
+use crate::components::table::Table;
+use crate::components::TableOptions;
 use crate::connector::fetchit;
+use crate::data::track_details::TrackDetail;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
@@ -19,6 +21,7 @@ pub enum CallBackMsg {
 
 pub struct App {
     link: ComponentLink<Self>,
+    track_detail: Vec<TrackDetail>,
 }
 
 impl Component for App {
@@ -31,7 +34,42 @@ impl Component for App {
             debug!("received: {:?}", option);
         });
 
-        App { link }
+        let track_detail = vec![
+            TrackDetail {
+                file: "1".to_string(),
+                title: "2".to_string(),
+                description: "3".to_string(),
+                county: "4".to_string(),
+                state: "5".to_string(),
+                track_type: "6".to_string(),
+                difficulty: 0,
+                track_time: 0,
+                track_length: 0,
+                start: "7".to_string(),
+                end: "8".to_string(),
+                adv_username: "9".to_string(),
+                url: "10".to_string(),
+                tags: vec![],
+            },
+            TrackDetail {
+                file: "a".to_string(),
+                title: "b".to_string(),
+                description: "c".to_string(),
+                county: "d".to_string(),
+                state: "e".to_string(),
+                track_type: "6".to_string(),
+                difficulty: 0,
+                track_time: 0,
+                track_length: 0,
+                start: "7".to_string(),
+                end: "8".to_string(),
+                adv_username: "9".to_string(),
+                url: "10".to_string(),
+                tags: vec![],
+            },
+        ];
+
+        App { link, track_detail }
     }
 
     fn update(&mut self, action: Self::Message) -> ShouldRender {
@@ -60,10 +98,16 @@ impl Component for App {
     }
 
     fn view(&self) -> Html {
+        let columns = columns![("file", "File Name")("title", "Title")(
+            "description",
+            "Description"
+        )("county", "Country")];
+
+        let options = TableOptions { orderable: true };
+
         html! {
             <>
-                <BootstrapTable/>
-
+                <Table columns=columns data=&self.track_detail, options=Some(options),/>
                 <BootstrapButton onsignal=self.link.callback(|_| CallBackMsg::Add) title="Add route" />
                 <BootstrapButton onsignal=self.link.callback(|_| CallBackMsg::Remove) title="Remove route" />
             </>
