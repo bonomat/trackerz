@@ -85,12 +85,11 @@ if [ -f .init ]; then
     mkdir pkg 2>/dev/null
     cargo install thttp
     cargo install wasm-pack
-    npm install --global rollup
-    npm init -y
-    npm install --save-dev rollup-plugin-livereload
-    npm install rollup-plugin-inject-env
-    npm install pnpm -g
-    npm install @rollup/plugin-inject --save-dev
+    yarn global add rollup
+    yarn add rollup-plugin-livereload --dev
+    yarn add rollup-plugin-inject-env
+    yarn global add pnpm
+    yarn add @rollup/plugin-inject --dev
 fi
 
 build && pack && run && watch
