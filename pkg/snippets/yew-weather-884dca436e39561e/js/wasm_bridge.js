@@ -44,6 +44,7 @@ export async function read_gpx(gpx_url) {
         useSpatialIndex: false
     });
     vector.set('name', 'latest');
+
     window.mymap.addLayer(vector);
     vector.getSource().once('change', function (evt) {
         const source = evt.target;
@@ -52,7 +53,7 @@ export async function read_gpx(gpx_url) {
             window.mymap.getView().fit(extent, window.mymap.getSize());
         }
     });
-    // Get the array of features
+
     return vector.get('name');
 }
 

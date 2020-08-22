@@ -1,9 +1,8 @@
 use crate::components::button::BootstrapButton;
-use crate::connector;
-use std::time::Duration;
+use crate::components::table::BootstrapTable;
+use crate::connector::fetchit;
 use wasm_bindgen::prelude::*;
-use wasm_bindgen_futures::{spawn_local, JsFuture};
-use wasm_timer::Delay;
+use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
 #[wasm_bindgen(module = "/js/wasm_bridge.js")]
@@ -20,7 +19,6 @@ pub enum CallBackMsg {
 
 pub struct App {
     link: ComponentLink<Self>,
-    layer: Option<JsValue>,
 }
 
 impl Component for App {
@@ -28,7 +26,12 @@ impl Component for App {
     type Properties = ();
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        App { link, layer: None }
+        spawn_local(async move {
+            let option = fetchit().await.unwrap();
+            debug!("received: {:?}", option);
+        });
+
+        App { link }
     }
 
     fn update(&mut self, action: Self::Message) -> ShouldRender {
@@ -41,7 +44,7 @@ impl Component for App {
                     location.push_str(
                         "trackz/gpx/20140124_110945_brisbane-to-sydney-adventure-ride.gpx",
                     );
-                    let js_value = read_gpx(location.as_str()).await.unwrap();
+                    let js_value = read_gpx(location.as_str()).unwrap();
                     debug!("received: {:?}", js_value);
                 });
             }
@@ -59,6 +62,8 @@ impl Component for App {
     fn view(&self) -> Html {
         html! {
             <>
+                <BootstrapTable/>
+
                 <BootstrapButton onsignal=self.link.callback(|_| CallBackMsg::Add) title="Add route" />
                 <BootstrapButton onsignal=self.link.callback(|_| CallBackMsg::Remove) title="Remove route" />
             </>
