@@ -1,14 +1,13 @@
-use crate::{
-    components::{button::BootstrapButton, error::Result, TableError},
-    data::track_details::TrackDetail,
-};
+use crate::{components::button::BootstrapButton, data::track_details::TrackDetail};
 use serde::Serialize;
 use serde_value::Value;
-use std::{cmp::Reverse, fmt, str::FromStr};
+use std::{cmp::Reverse, error::Error, fmt, str::FromStr};
 use url::Url;
 use wasm_bindgen::{prelude::*, JsValue};
 use wasm_bindgen_futures::spawn_local;
 use yew::{html, prelude::*, ComponentLink, Html};
+
+pub type Result<T> = std::result::Result<T, TableError>;
 
 #[wasm_bindgen(module = "/js/wasm_bridge.js")]
 extern "C" {
@@ -209,16 +208,22 @@ impl Component for Table {
             }
             TableCallbackMsg::Add(file_name) => {
                 spawn_local(async move {
-                    url.path_segments_mut()
+                    debug!("adding: {:?}", &file_name);
+                    let js_value = if file_name.contains(".kml") {
+                        url.path_segments_mut()
                         .unwrap()
                         .push("trackz")
-                        .push("gpx")
+                        .push("kml")
                         .push(&file_name);
-                    let url = url.as_str();
-                    debug!("adding: {:?}", &url);
-                    let js_value = if file_name.contains(".kml") {
+                        let url = url.as_str();
                         read_kml(url).await
                     } else {
+                        url.path_segments_mut()
+                            .unwrap()
+                            .push("trackz")
+                            .push("gpx")
+                            .push(&file_name);
+                        let url = url.as_str();
                         read_gpx(url).await
                     };
                     debug!("received: {:?}", js_value.as_string().unwrap());
@@ -318,6 +323,40 @@ impl Table {
                         .map(|el| html! { <td>{ el }</td> })
                 }
             </tr>
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum TableError {
+    NonRenderableField(String),
+    InvalidFieldName(String),
+}
+
+impl fmt::Display for TableError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let msg = match self {
+            TableError::InvalidFieldName(field_name) => {
+                format!("Invalid field name given: '{}'.", field_name)
+            }
+            TableError::NonRenderableField(field_name) => format!(
+                "Could not render field '{}' for which no HTML representation is defined.",
+                field_name
+            ),
+        };
+        write!(f, "{}", msg)
+    }
+}
+
+impl Error for TableError {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        None
+    }
+
+    fn description(&self) -> &str {
+        match self {
+            TableError::InvalidFieldName(_) => "Invalid field name given.",
+            TableError::NonRenderableField(_) => "Field has no HTML representation defined.",
         }
     }
 }

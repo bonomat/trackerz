@@ -58,7 +58,6 @@ export async function read_gpx(gpx_url) {
 }
 
 export async function read_kml(kml_url) {
-    console.log("Printing kml" + kml_url)
     const style = {
         'Point': new ol.style.Style({
             image: new ol.style.Circle({

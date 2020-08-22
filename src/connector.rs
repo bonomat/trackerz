@@ -1,8 +1,8 @@
 use crate::data::track_details::{TrackDetail, Trackz};
+use futures::future::try_join_all;
 use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{Request, RequestInit, RequestMode, Response};
-use futures::future::try_join_all;
 
 const TRACKZ_PATH: &str = "trackz/trackz.json";
 
@@ -39,8 +39,7 @@ pub async fn load_tracks() -> Result<Option<Vec<TrackDetail>>, JsValue> {
                     let track_details = details.into_iter().filter_map(|track| track).collect();
 
                     Ok(Some(track_details))
-
-                },
+                }
                 Err(e) => {
                     debug!("Could not deserialize json file: {:?}", e);
                     Ok(None)
@@ -54,8 +53,7 @@ pub async fn load_tracks() -> Result<Option<Vec<TrackDetail>>, JsValue> {
     }
 }
 
-
-pub async fn load_track_details(url : String) -> Result<Option<TrackDetail>, JsValue> {
+pub async fn load_track_details(url: String) -> Result<Option<TrackDetail>, JsValue> {
     let mut opts = RequestInit::new();
     opts.method("GET");
     opts.mode(RequestMode::Cors);

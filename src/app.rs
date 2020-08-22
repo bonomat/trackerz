@@ -11,7 +11,7 @@ pub enum CallBackMsg {
 }
 
 pub struct App {
-    link: ComponentLink<Self>,
+    _link: ComponentLink<Self>,
     track_detail: Vec<TrackDetail>,
 }
 
@@ -19,9 +19,10 @@ impl Component for App {
     type Message = CallBackMsg;
     type Properties = ();
 
-    fn create(properties: Self::Properties, link: ComponentLink<Self>) -> Self {
-        debug!("{:?}", properties);
-        let callback = link.clone()
+    fn create(_properties: Self::Properties, link: ComponentLink<Self>) -> Self {
+        debug!("Called once or twice ");
+        let callback = link
+            .clone()
             .callback(|elements: Vec<TrackDetail>| CallBackMsg::TrackzLoaded(elements));
         spawn_local(async move {
             let trackz = load_tracks().await.unwrap().unwrap();
@@ -29,18 +30,21 @@ impl Component for App {
             callback.emit(trackz)
         });
 
-
-        App { link, track_detail: vec![] }
+        App {
+            _link: link,
+            track_detail: vec![],
+        }
     }
 
     fn update(&mut self, action: Self::Message) -> ShouldRender {
         match action {
             CallBackMsg::TrackzLoaded(trackz) => {
                 let mut new_track_detail = self.track_detail.clone();
-                trackz.iter().for_each(|track_detail| if !new_track_detail.contains(track_detail) {
-                    new_track_detail.push(track_detail.clone());
+                trackz.iter().for_each(|track_detail| {
+                    if !new_track_detail.contains(track_detail) {
+                        new_track_detail.push(track_detail.clone());
                     }
-                );
+                });
                 self.track_detail = new_track_detail;
             }
         }

@@ -1,11 +1,10 @@
 use serde::{Deserialize, Serialize};
 
-
 /// A collection of gpx/kml tracks
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct Trackz {
     pub gpx: Vec<String>,
-    pub kml: Vec<String>
+    pub kml: Vec<String>,
 }
 
 /// A struct to hold track details.
