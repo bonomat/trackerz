@@ -4,7 +4,6 @@ macro_rules! column {
         $crate::table::Column {
             data_property: Some($a.to_string()),
             name: $a.to_string(),
-            short_name: Some($a.to_string()),
         }
     }};
     ($a:expr, $b:expr) => {{

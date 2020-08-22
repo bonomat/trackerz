@@ -1,4 +1,3 @@
-use crate::components::TableData;
 use serde::{Deserialize, Serialize};
 
 /// A struct to hold track details.
@@ -10,7 +9,7 @@ pub struct TrackDetail {
     pub file: String,
     pub title: String,
     pub description: String,
-    pub county: String,
+    pub country: String,
     pub state: String,
     pub track_type: String,
     pub difficulty: usize,
