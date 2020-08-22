@@ -1,29 +1,26 @@
-use crate::components::button::BootstrapButton;
-use crate::components::error::Result;
-use crate::components::TableError;
-use crate::data::track_details::TrackDetail;
+use crate::{
+    components::{button::BootstrapButton, error::Result, TableError},
+    data::track_details::TrackDetail,
+};
 use serde::Serialize;
 use serde_value::Value;
-use std::cmp::Reverse;
-use std::fmt;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsValue;
-use wasm_bindgen_futures::spawn_local;
-use yew::prelude::*;
-use yew::{html, ComponentLink, Html};
+use std::{cmp::Reverse, fmt, str::FromStr};
 use url::Url;
-use std::str::FromStr;
+use wasm_bindgen::{prelude::*, JsValue};
+use wasm_bindgen_futures::spawn_local;
+use yew::{html, prelude::*, ComponentLink, Html};
 
 #[wasm_bindgen(module = "/js/wasm_bridge.js")]
 extern "C" {
     // #[wasm_bindgen(catch)]
-    async fn read_gpx(url: &str) -> JsValue; // todo: different result?
-    async fn read_kml(url: &str) -> JsValue; // todo: different result?
+    async fn read_gpx(url: &str) -> JsValue;
+    async fn read_kml(url: &str) -> JsValue;
     fn remove(layer: &str);
 }
 
 pub trait TableData: 'static + Default + Clone + Ord + Serialize {
-    /// Returns the Html representation of a field. When None, the field is not rendered.
+    /// Returns the Html representation of a field. When None, the field is not
+    /// rendered.
     fn get_field_as_html(
         &self,
         field_name: &str,
@@ -31,7 +28,8 @@ pub trait TableData: 'static + Default + Clone + Ord + Serialize {
         link: &ComponentLink<Table>,
     ) -> Result<Html>;
 
-    /// Returns a table value given its field name. This value is used as a sorting key for the corresponding column.
+    /// Returns a table value given its field name. This value is used as a
+    /// sorting key for the corresponding column.
     fn get_field_as_value(&self, field_name: &str) -> Result<Value>;
 }
 
@@ -93,7 +91,8 @@ pub struct TableState {
 /// The a table with columns holding data.
 #[derive(Clone)]
 pub struct Table {
-    /// The order of the columns determines the order in which they are displayed.
+    /// The order of the columns determines the order in which they are
+    /// displayed.
     pub columns: Vec<Column>,
     pub data: Vec<TrackDetail>,
     pub options: Option<TableOptions>,
@@ -178,7 +177,7 @@ impl Component for Table {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         let window = web_sys::window().expect("no global `window` exists");
         let location = window.location();
-        let  location: String = location.href().expect("To get URL");
+        let location: String = location.href().expect("To get URL");
         let mut url = Url::from_str(&location).unwrap();
         match msg {
             TableCallbackMsg::SortColumn(i) => {
@@ -210,8 +209,11 @@ impl Component for Table {
             }
             TableCallbackMsg::Add(file_name) => {
                 spawn_local(async move {
-
-                    url.path_segments_mut().unwrap().push("trackz").push("gpx").push(&file_name);
+                    url.path_segments_mut()
+                        .unwrap()
+                        .push("trackz")
+                        .push("gpx")
+                        .push(&file_name);
                     let url = url.as_str();
                     debug!("adding: {:?}", &url);
                     let js_value = if file_name.contains(".kml") {

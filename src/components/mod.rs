@@ -4,5 +4,4 @@ pub mod button;
 pub mod error;
 pub mod table;
 
-pub use self::error::*;
-pub use self::table::*;
+pub use self::{error::*, table::*};

@@ -1,12 +1,14 @@
-use crate::components::table::Table;
-use crate::components::Column;
-use crate::components::TableOptions;
-use crate::connector::fetchit;
-use crate::data::track_details::TrackDetail;
+use crate::{
+    components::{table::Table, Column, TableOptions},
+    connector::load_tracks,
+    data::track_details::TrackDetail,
+};
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 
-pub enum CallBackMsg {}
+pub enum CallBackMsg {
+    TrackzLoaded(Vec<TrackDetail>),
+}
 
 pub struct App {
     link: ComponentLink<Self>,
@@ -17,52 +19,32 @@ impl Component for App {
     type Message = CallBackMsg;
     type Properties = ();
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(properties: Self::Properties, link: ComponentLink<Self>) -> Self {
+        debug!("{:?}", properties);
+        let callback = link.clone()
+            .callback(|elements: Vec<TrackDetail>| CallBackMsg::TrackzLoaded(elements));
         spawn_local(async move {
-            let option = fetchit().await.unwrap();
-            debug!("received: {:?}", option);
+            let trackz = load_tracks().await.unwrap().unwrap();
+            debug!("received: {:?}", trackz);
+            callback.emit(trackz)
         });
 
-        let track_detail = vec![
-            TrackDetail {
-                file: "KTM_Breakout_5.gpx".to_string(),
-                title: "A GPX file".to_string(),
-                description: "3".to_string(),
-                country: "4".to_string(),
-                state: "5".to_string(),
-                track_type: "6".to_string(),
-                difficulty: 0,
-                track_time: 0,
-                track_length: 0,
-                start: "7".to_string(),
-                end: "8".to_string(),
-                adv_username: "9".to_string(),
-                url: "10".to_string(),
-                tags: vec![],
-            },
-            TrackDetail {
-                file: "Hill End Camping _ Putty National Park.kml".to_string(),
-                title: "A KML file with spaces".to_string(),
-                description: "c".to_string(),
-                country: "d".to_string(),
-                state: "e".to_string(),
-                track_type: "6".to_string(),
-                difficulty: 0,
-                track_time: 0,
-                track_length: 0,
-                start: "7".to_string(),
-                end: "8".to_string(),
-                adv_username: "9".to_string(),
-                url: "10".to_string(),
-                tags: vec![],
-            },
-        ];
 
-        App { link, track_detail }
+        App { link, track_detail: vec![] }
     }
 
-    fn update(&mut self, _action: Self::Message) -> ShouldRender {
-        false
+    fn update(&mut self, action: Self::Message) -> ShouldRender {
+        match action {
+            CallBackMsg::TrackzLoaded(trackz) => {
+                let mut new_track_detail = self.track_detail.clone();
+                trackz.iter().for_each(|track_detail| if !new_track_detail.contains(track_detail) {
+                    new_track_detail.push(track_detail.clone());
+                    }
+                );
+                self.track_detail = new_track_detail;
+            }
+        }
+        true
     }
 
     fn change(&mut self, _props: Self::Properties) -> ShouldRender {

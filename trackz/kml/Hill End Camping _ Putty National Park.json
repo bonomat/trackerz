@@ -1,0 +1,16 @@
+{
+  "file" : "Hill End Camping _ Putty National Park.kml",
+  "title": "Hill End Camping - Putty National Park",
+  "description" : "Some description",
+  "country": "Australia",
+  "state": "New South Wales",
+  "track_type": "dirt",
+  "difficulty": 3,
+  "track_time" : 10,
+  "track_length" : 20,
+  "start" : "20200104",
+  "end" : "20200105",
+  "adv_username" : "bonomat",
+  "url" : "www.google.com",
+  "tags" : []
+}
