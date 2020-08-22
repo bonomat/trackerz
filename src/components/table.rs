@@ -11,11 +11,14 @@ use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::spawn_local;
 use yew::prelude::*;
 use yew::{html, ComponentLink, Html};
+use url::Url;
+use std::str::FromStr;
 
 #[wasm_bindgen(module = "/js/wasm_bridge.js")]
 extern "C" {
-    #[wasm_bindgen(catch)]
-    fn read_gpx(url: &str) -> core::result::Result<JsValue, JsValue>; // todo: different result?
+    // #[wasm_bindgen(catch)]
+    async fn read_gpx(url: &str) -> JsValue; // todo: different result?
+    async fn read_kml(url: &str) -> JsValue; // todo: different result?
     fn remove(layer: &str);
 }
 
@@ -107,9 +110,6 @@ impl TableData for TrackDetail {
     ) -> Result<Html> {
         let file_name = file_name.to_string();
         let html_repr = match field_name {
-            "file" => html! {
-                { &self.file }
-            },
             "title" => html! {
                 { &self.title }
             },
@@ -132,7 +132,6 @@ impl TableData for TrackDetail {
 
     fn get_field_as_value(&self, field_name: &str) -> Result<Value> {
         let value = match field_name {
-            "file" => serde_value::to_value(&self.file),
             "title" => serde_value::to_value(&self.title),
             "description" => serde_value::to_value(&self.description),
             "country" => serde_value::to_value(&self.country),
@@ -179,7 +178,8 @@ impl Component for Table {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         let window = web_sys::window().expect("no global `window` exists");
         let location = window.location();
-        let mut location: String = location.href().expect("To get URL");
+        let  location: String = location.href().expect("To get URL");
+        let mut url = Url::from_str(&location).unwrap();
         match msg {
             TableCallbackMsg::SortColumn(i) => {
                 use TableOrder::*;
@@ -208,14 +208,19 @@ impl Component for Table {
                     None => false,
                 }
             }
-            TableCallbackMsg::Add(message) => {
+            TableCallbackMsg::Add(file_name) => {
                 spawn_local(async move {
-                    location.push_str(
-                        "trackz/gpx/20140124_110945_brisbane-to-sydney-adventure-ride.gpx",
-                    );
-                    let js_value = read_gpx(location.as_str()).unwrap();
-                    debug!("received: {:?}", js_value);
-                    debug!("added: {:?}", message);
+
+                    url.path_segments_mut().unwrap().push("trackz").push("gpx").push(&file_name);
+                    let url = url.as_str();
+                    debug!("adding: {:?}", &url);
+                    let js_value = if file_name.contains(".kml") {
+                        read_kml(url).await
+                    } else {
+                        read_gpx(url).await
+                    };
+                    debug!("received: {:?}", js_value.as_string().unwrap());
+                    debug!("added: {:?}", file_name);
                 });
                 true
             }

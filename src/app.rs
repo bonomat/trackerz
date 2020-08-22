@@ -25,8 +25,8 @@ impl Component for App {
 
         let track_detail = vec![
             TrackDetail {
-                file: "1".to_string(),
-                title: "2".to_string(),
+                file: "KTM_Breakout_5.gpx".to_string(),
+                title: "A GPX file".to_string(),
                 description: "3".to_string(),
                 country: "4".to_string(),
                 state: "5".to_string(),
@@ -41,8 +41,8 @@ impl Component for App {
                 tags: vec![],
             },
             TrackDetail {
-                file: "a".to_string(),
-                title: "b".to_string(),
+                file: "Hill End Camping _ Putty National Park.kml".to_string(),
+                title: "A KML file with spaces".to_string(),
                 description: "c".to_string(),
                 country: "d".to_string(),
                 state: "e".to_string(),
@@ -71,7 +71,6 @@ impl Component for App {
 
     fn view(&self) -> Html {
         let columns = vec![
-            Column::new(Some("file".into()), "File Name".into()),
             Column::new(Some("title".into()), "Title".into()),
             Column::new(Some("description".into()), "Description".into()),
             Column::new(Some("country".into()), "Country".into()),
