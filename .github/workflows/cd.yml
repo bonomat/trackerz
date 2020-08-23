@@ -13,13 +13,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install libwebkit2gtk-4.0-37 libwebkit2gtk-4.0-dev
-      - name: Install Rust 🦀
-        id: toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          override: true
-      - name: Install build dependencies 🦀
+#      - name: Install Rust 🦀
+#        id: toolchain
+#        uses: actions-rs/toolchain@v1
+#        with:
+#          toolchain: stable
+      - name: Install build dependencies ♻️🦀
         run: |
           cargo install cargo-watch
           cargo install thttp
