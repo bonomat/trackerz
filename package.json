@@ -4,7 +4,12 @@
   "description": "Adventure rider tracks across australia",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "WASM_PACK_PROFILE=release wasm-pack build --target web",
+    "pack": "rollup main.js --file pkg/bundle.js --format iife",
+    "run": "thttp -p 8080",
+    "watch": "cargo watch -w ./src --postpone -s 'npm run build && npm run pack' ",
+    "dev": "npm run run & npm run watch"
   },
   "repository": {
     "type": "git",
