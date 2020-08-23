@@ -1,7 +1,7 @@
 {
   "name": "southern_crossing",
   "version": "0.1.0",
-  "description": "Adventure rider tracks accross australia",
+  "description": "Adventure rider tracks across australia",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
