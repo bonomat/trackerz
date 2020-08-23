@@ -2,8 +2,6 @@ name: deploy
 
 on:
   push:
-    branches:
-      - master
 
 jobs:
   build-and-deploy:
@@ -11,15 +9,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Installing dependencies 🐧
+        run: |
+          sudo apt-get update
+          sudo apt-get install libwebkit2gtk-4.0-37 libwebkit2gtk-4.0-dev
+      - name: Install Rust 🦀
+        id: toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+      - name: Install build dependencies 🦀
+        run: |
+          cargo install cargo-watch
+          cargo install thttp
+          cargo install wasm-pack
+          yarn global add rollup
       - name: Checkout 🛎️
         uses: actions/checkout@v2
         with:
           persist-credentials: false
-      - name: Installing needed Ubuntu dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install libwebkit2gtk-4.0-37 libwebkit2gtk-4.0-dev
-      - uses: actions/checkout@v1
       - uses: jetli/wasm-pack-action@v0.3.0
         with:
           version: 'latest'
