@@ -17,7 +17,7 @@ pub fn run_app() -> Result<(), JsValue> {
 
     let window = web_sys::window().expect("no global `window` exists");
     let document = window.document().expect("should have a document on window");
-    let mounting_div = document.get_element_by_id("trackerz_app").unwrap();
+    let mounting_div = document.get_element_by_id("southern_crossing_app").unwrap();
     yew::App::<app::App>::new().mount(mounting_div);
 
     Ok(())

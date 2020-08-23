@@ -330,6 +330,9 @@
 
         return real;
     }
+    function __wbg_adapter_20(arg0, arg1, arg2) {
+        wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h709fc0ce6ebc488e(arg0, arg1, addHeapObject(arg2));
+    }
 
     let stack_pointer = 32;
 
@@ -338,16 +341,12 @@
         heap[--stack_pointer] = obj;
         return stack_pointer;
     }
-    function __wbg_adapter_20(arg0, arg1, arg2) {
+    function __wbg_adapter_23(arg0, arg1, arg2) {
         try {
             wasm._dyn_core__ops__function__FnMut___A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h50f06599b4161d4d(arg0, arg1, addBorrowedObject(arg2));
         } finally {
             heap[stack_pointer++] = undefined;
         }
-    }
-
-    function __wbg_adapter_23(arg0, arg1, arg2) {
-        wasm._dyn_core__ops__function__FnMut__A____Output___R_as_wasm_bindgen__closure__WasmClosure___describe__invoke__h709fc0ce6ebc488e(arg0, arg1, addHeapObject(arg2));
     }
 
     /**
@@ -409,12 +408,12 @@
         imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
             takeObject(arg0);
         };
+        imports.wbg.__wbg_remove_cc32796778fa4146 = function(arg0, arg1) {
+            remove(getStringFromWasm0(arg0, arg1));
+        };
         imports.wbg.__wbindgen_string_new = function(arg0, arg1) {
             var ret = getStringFromWasm0(arg0, arg1);
             return addHeapObject(ret);
-        };
-        imports.wbg.__wbg_remove_21090bad2ce0314d = function(arg0, arg1) {
-            remove(getStringFromWasm0(arg0, arg1));
         };
         imports.wbg.__wbindgen_json_serialize = function(arg0, arg1) {
             const obj = getObject(arg1);
@@ -424,6 +423,14 @@
             getInt32Memory0()[arg0 / 4 + 1] = len0;
             getInt32Memory0()[arg0 / 4 + 0] = ptr0;
         };
+        imports.wbg.__wbg_readkml_58c796d009132466 = function(arg0, arg1) {
+            var ret = read_kml(getStringFromWasm0(arg0, arg1));
+            return addHeapObject(ret);
+        };
+        imports.wbg.__wbg_readgpx_9036088d03c24278 = function(arg0, arg1) {
+            var ret = read_gpx(getStringFromWasm0(arg0, arg1));
+            return addHeapObject(ret);
+        };
         imports.wbg.__wbindgen_cb_drop = function(arg0) {
             const obj = takeObject(arg0).original;
             if (obj.cnt-- == 1) {
@@ -432,14 +439,6 @@
             }
             var ret = false;
             return ret;
-        };
-        imports.wbg.__wbg_readkml_64b8a7a76fa56c81 = function(arg0, arg1) {
-            var ret = read_kml(getStringFromWasm0(arg0, arg1));
-            return addHeapObject(ret);
-        };
-        imports.wbg.__wbg_readgpx_5ff0e81338760955 = function(arg0, arg1) {
-            var ret = read_gpx(getStringFromWasm0(arg0, arg1));
-            return addHeapObject(ret);
         };
         imports.wbg.__wbindgen_object_clone_ref = function(arg0) {
             var ret = getObject(arg0);
@@ -666,12 +665,12 @@
         imports.wbg.__wbindgen_throw = function(arg0, arg1) {
             throw new Error(getStringFromWasm0(arg0, arg1));
         };
-        imports.wbg.__wbindgen_closure_wrapper1280 = function(arg0, arg1, arg2) {
-            var ret = makeMutClosure(arg0, arg1, 186, __wbg_adapter_23);
+        imports.wbg.__wbindgen_closure_wrapper1281 = function(arg0, arg1, arg2) {
+            var ret = makeMutClosure(arg0, arg1, 187, __wbg_adapter_20);
             return addHeapObject(ret);
         };
-        imports.wbg.__wbindgen_closure_wrapper548 = function(arg0, arg1, arg2) {
-            var ret = makeMutClosure(arg0, arg1, 164, __wbg_adapter_20);
+        imports.wbg.__wbindgen_closure_wrapper549 = function(arg0, arg1, arg2) {
+            var ret = makeMutClosure(arg0, arg1, 165, __wbg_adapter_23);
             return addHeapObject(ret);
         };
 
@@ -704,7 +703,7 @@
     });
 
     async function main() {
-      await init("./pkg/yew_weather_bg.wasm");
+      await init("./pkg/southern_crossing_bg.wasm");
       run_app();
     }
 
