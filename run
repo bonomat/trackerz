@@ -34,20 +34,20 @@ watch() {
 }
 
 stop() {
-    kill $(cat .serverpid) 2>/dev/null
+    kill "$(cat .serverpid)" 2>/dev/null
     rm .serverpid
 }
 
 clean(){
     if [ -f .serverpid ]; then
-        kill $(cat .serverpid)
+        kill "$(cat .serverpid)"
         rm .serverpid
         echo "Server stopped."
     else
         echo "Could not find the server PID. Is it running?"
     fi
     if [ -f .serverpid.rollup ]; then
-        kill $(cat .serverpid.rollup)
+        kill "$(cat .serverpid.rollup)"
         rm .serverpid.rollup
         echo "Hot-Reload server stopped."
     else
@@ -83,12 +83,14 @@ fi
 if [ -f .init ]; then
     rm .init
     mkdir pkg 2>/dev/null
+    cargo install cargo-watch
     cargo install thttp
     cargo install wasm-pack
-    npm install --global rollup
-    npm init -y
-    npm install --save-dev rollup-plugin-livereload
-    npm install rollup-plugin-inject-env
+    yarn global add rollup
+    yarn add rollup-plugin-livereload --dev
+    yarn add rollup-plugin-inject-env
+    yarn global add pnpm
+    yarn add @rollup/plugin-inject --dev
 fi
 
 build && pack && run && watch

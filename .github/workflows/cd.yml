@@ -1,0 +1,41 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Installing needed Ubuntu dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install libwebkit2gtk-4.0-37 libwebkit2gtk-4.0-dev
+      - uses: actions/checkout@v1
+      - uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: 'latest'
+      - name: Build 🚧
+        run: |
+          cp .env.example .env
+          yarn install
+          yarn run pack
+          yarn run build
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BRANCH: gh-pages
+          CLEAN: true
+          FOLDER: .
+          CLEAN_EXCLUDE: "[\".gitignore\", \"README.md\"]"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
