@@ -9,20 +9,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Installing dependencies 🐧
+      - name: Installing system dependencies 🐧
         run: |
           sudo apt-get update
           sudo apt-get install libwebkit2gtk-4.0-37 libwebkit2gtk-4.0-dev
-#      - name: Install Rust 🦀
-#        id: toolchain
-#        uses: actions-rs/toolchain@v1
-#        with:
-#          toolchain: stable
-      - name: Install build dependencies ♻️🦀
+      - name: Install build dependencies ♻️
         run: |
-          cargo install cargo-watch
-          cargo install thttp
-          cargo install wasm-pack
           yarn global add rollup
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -35,8 +27,8 @@ jobs:
         run: |
           cp .env.example .env
           yarn install
-          yarn run pack
           yarn run build
+          yarn run pack
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
