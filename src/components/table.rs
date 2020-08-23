@@ -211,10 +211,10 @@ impl Component for Table {
                     debug!("adding: {:?}", &file_name);
                     let js_value = if file_name.contains(".kml") {
                         url.path_segments_mut()
-                        .unwrap()
-                        .push("trackz")
-                        .push("kml")
-                        .push(&file_name);
+                            .unwrap()
+                            .push("trackz")
+                            .push("kml")
+                            .push(&file_name);
                         let url = url.as_str();
                         read_kml(url).await
                     } else {
@@ -242,9 +242,13 @@ impl Component for Table {
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        self.columns = props.columns;
-        self.data = props.data;
-        true
+        if self.columns != props.columns || self.data != props.data {
+            self.columns = props.columns;
+            self.data = props.data;
+            true
+        } else {
+            false
+        }
     }
 
     fn view(&self) -> Html {

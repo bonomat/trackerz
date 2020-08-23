@@ -26,7 +26,6 @@ impl Component for App {
             .callback(|elements: Vec<TrackDetail>| CallBackMsg::TrackzLoaded(elements));
         spawn_local(async move {
             let trackz = load_tracks().await.unwrap().unwrap();
-            debug!("received: {:?}", trackz);
             callback.emit(trackz)
         });
 

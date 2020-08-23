@@ -1,15 +1,15 @@
 {
-  "name": "yew-weather",
+  "name": "southern_crossing",
   "collaborators": [
     "Philipp Hoenisch <philipp@hoenisch.at>"
   ],
   "version": "0.1.0",
   "files": [
-    "yew_weather_bg.wasm",
-    "yew_weather.js",
-    "yew_weather.d.ts"
+    "southern_crossing_bg.wasm",
+    "southern_crossing.js",
+    "southern_crossing.d.ts"
   ],
-  "module": "yew_weather.js",
-  "types": "yew_weather.d.ts",
+  "module": "southern_crossing.js",
+  "types": "southern_crossing.d.ts",
   "sideEffects": false
 }
